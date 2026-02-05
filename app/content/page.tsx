@@ -42,23 +42,21 @@ const tierLabels: Record<MembershipTier, string> = {
 export default function ContentPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [membershipTier, setMembershipTier] = useState<MembershipTier>("a");
+  const getStoredTier = (): MembershipTier => {
+    if (typeof window === "undefined") return "a";
+    const stored = window.localStorage.getItem("membershipTier") as
+      | MembershipTier
+      | null;
+    return stored && tierLimits[stored] ? stored : "a";
+  };
+
+  const [membershipTier] = useState<MembershipTier>(() => getStoredTier());
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/sign-in");
     }
   }, [isPending, session, router]);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("membershipTier") as
-      | MembershipTier
-      | null;
-
-    if (stored && tierLimits[stored]) {
-      setMembershipTier(stored);
-    }
-  }, []);
 
   const { visibleVideos, visibleContents } = useMemo(() => {
     const limit = tierLimits[membershipTier];
