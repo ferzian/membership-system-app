@@ -31,8 +31,20 @@ const tierLimits: Record<MembershipTier, number | "all"> = {
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [selectedTier, setSelectedTier] = useState<MembershipTier>("a");
-  const [appliedTier, setAppliedTier] = useState<MembershipTier>("a");
+  const getStoredTier = (): MembershipTier => {
+    if (typeof window === "undefined") return "a";
+    const stored = window.localStorage.getItem("membershipTier") as
+      | MembershipTier
+      | null;
+    return stored && tierLimits[stored] ? stored : "a";
+  };
+
+  const [selectedTier, setSelectedTier] = useState<MembershipTier>(
+    () => getStoredTier()
+  );
+  const [appliedTier, setAppliedTier] = useState<MembershipTier>(
+    () => getStoredTier()
+  );
   const { visibleVideos, visibleContents } = useMemo(() => {
     const limit = tierLimits[appliedTier];
     const slice = (items: typeof videos) =>
@@ -49,17 +61,6 @@ export default function DashboardPage() {
       router.push("/sign-in");
     }
   }, [isPending, session, router]);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("membershipTier") as
-      | MembershipTier
-      | null;
-
-    if (stored && tierLimits[stored]) {
-      setSelectedTier(stored);
-      setAppliedTier(stored);
-    }
-  }, []);
 
   if (isPending)
     return <p className="text-center mt-8 text-white">Loading...</p>;
