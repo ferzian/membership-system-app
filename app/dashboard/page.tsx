@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useEffect, useMemo, useState } from "react";
 
-type MembershipTier = "basic" | "standard" | "full";
+type MembershipTier = "a" | "b" | "c";
 
 const videos = [
   { id: "v1", title: "Video 1: Intro Membership" },
@@ -23,16 +23,16 @@ const contents = [
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
-  basic: 1,
-  standard: 3,
-  full: "all",
+  a: 1,
+  b: 3,
+  c: "all",
 };
 
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [selectedTier, setSelectedTier] = useState<MembershipTier>("basic");
-  const [appliedTier, setAppliedTier] = useState<MembershipTier>("basic");
+  const [selectedTier, setSelectedTier] = useState<MembershipTier>("a");
+  const [appliedTier, setAppliedTier] = useState<MembershipTier>("a");
   const { visibleVideos, visibleContents } = useMemo(() => {
     const limit = tierLimits[appliedTier];
     const slice = (items: typeof videos) =>
@@ -50,6 +50,17 @@ export default function DashboardPage() {
     }
   }, [isPending, session, router]);
 
+  useEffect(() => {
+    const stored = window.localStorage.getItem("membershipTier") as
+      | MembershipTier
+      | null;
+
+    if (stored && tierLimits[stored]) {
+      setSelectedTier(stored);
+      setAppliedTier(stored);
+    }
+  }, []);
+
   if (isPending)
     return <p className="text-center mt-8 text-white">Loading...</p>;
   if (!session?.user)
@@ -66,9 +77,9 @@ export default function DashboardPage() {
       </div>
 
       <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
-        <h2 className="text-lg font-semibold">Membership Filter</h2>
+        <h2 className="text-lg font-semibold">Pilih Membership</h2>
         <p className="text-sm text-neutral-300">
-          Pilih tipe membership yang ingin ditampilkan.
+          Pilih membership untuk mengatur akses konten dan video.
         </p>
 
         <fieldset className="mt-4 space-y-3">
@@ -78,16 +89,16 @@ export default function DashboardPage() {
             <input
               type="radio"
               name="membership-filter"
-              value="basic"
-              checked={selectedTier === "basic"}
-              onChange={() => setSelectedTier("basic")}
+              value="a"
+              checked={selectedTier === "a"}
+              onChange={() => setSelectedTier("a")}
               defaultChecked
               className="mt-1"
             />
             <div>
-              <p className="font-medium">1 Video & 1 Konten</p>
+              <p className="font-medium">Membership A</p>
               <p className="text-sm text-neutral-300">
-                Hanya dapat melihat 1 video dan 1 konten.
+                Akses 1 video dan 1 konten.
               </p>
             </div>
           </label>
@@ -96,15 +107,15 @@ export default function DashboardPage() {
             <input
               type="radio"
               name="membership-filter"
-              value="standard"
-              checked={selectedTier === "standard"}
-              onChange={() => setSelectedTier("standard")}
+              value="b"
+              checked={selectedTier === "b"}
+              onChange={() => setSelectedTier("b")}
               className="mt-1"
             />
             <div>
-              <p className="font-medium">3 Video & Konten</p>
+              <p className="font-medium">Membership B</p>
               <p className="text-sm text-neutral-300">
-                Dapat melihat 3 video dan konten.
+                Akses 3 video dan 3 konten.
               </p>
             </div>
           </label>
@@ -113,13 +124,13 @@ export default function DashboardPage() {
             <input
               type="radio"
               name="membership-filter"
-              value="full"
-              checked={selectedTier === "full"}
-              onChange={() => setSelectedTier("full")}
+              value="c"
+              checked={selectedTier === "c"}
+              onChange={() => setSelectedTier("c")}
               className="mt-1"
             />
             <div>
-              <p className="font-medium">Full Akses</p>
+              <p className="font-medium">Membership C</p>
               <p className="text-sm text-neutral-300">
                 Akses penuh semua video dan konten.
               </p>
@@ -129,10 +140,13 @@ export default function DashboardPage() {
 
         <div className="mt-4">
           <button
-            onClick={() => setAppliedTier(selectedTier)}
+            onClick={() => {
+              setAppliedTier(selectedTier);
+              window.localStorage.setItem("membershipTier", selectedTier);
+            }}
             className="w-full bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-gray-200"
           >
-            Terapkan Filter
+            Simpan Membership
           </button>
         </div>
       </section>
@@ -172,6 +186,13 @@ export default function DashboardPage() {
           </ul>
         </div>
       </section>
+
+      <button
+        onClick={() => router.push("/content")}
+        className="w-full border border-neutral-600 text-white font-medium rounded-md px-4 py-2 hover:bg-neutral-900"
+      >
+        Buka Halaman Konten & Video
+      </button>
 
       <button
         onClick={() => signOut()}
