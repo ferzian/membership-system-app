@@ -22,6 +22,14 @@ const contents = [
   { id: "c5", title: "Konten 5: Bonus" },
 ];
 
+const menus = [
+  { id: "m1", title: "Menu 1: Materi Dasar" },
+  { id: "m2", title: "Menu 2: Template" },
+  { id: "m3", title: "Menu 3: Studi Kasus" },
+  { id: "m4", title: "Menu 4: Bonus" },
+  { id: "m5", title: "Menu 5: Webinar" },
+];
+
 const tierLimits: Record<MembershipTier, number | "all"> = {
   a: 1,
   b: 3,
@@ -45,7 +53,7 @@ export default function DashboardPage() {
   const [appliedTier, setAppliedTier] = useState<MembershipTier>(
     () => getStoredTier()
   );
-  const { visibleVideos, visibleContents } = useMemo(() => {
+  const { visibleVideos, visibleContents, visibleMenuCount } = useMemo(() => {
     const limit = tierLimits[appliedTier];
     const slice = (items: typeof videos) =>
       limit === "all" ? items : items.slice(0, limit);
@@ -53,6 +61,7 @@ export default function DashboardPage() {
     return {
       visibleVideos: slice(videos),
       visibleContents: slice(contents),
+      visibleMenuCount: limit === "all" ? menus.length : limit,
     };
   }, [appliedTier]);
 
@@ -186,6 +195,37 @@ export default function DashboardPage() {
             ))}
           </ul>
         </div>
+      </section>
+
+      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-3">
+        <div>
+          <h2 className="text-lg font-semibold">Menu Akses</h2>
+          <p className="text-sm text-neutral-300">
+            Menu terkunci mengikuti membership yang dipilih.
+          </p>
+        </div>
+        <ul className="space-y-2">
+          {menus.map((menu, index) => {
+            const isLocked = index >= visibleMenuCount;
+            return (
+              <li
+                key={menu.id}
+                className={`rounded-md border px-3 py-2 flex items-center justify-between ${
+                  isLocked
+                    ? "border-neutral-800 bg-neutral-900/40 text-neutral-400"
+                    : "border-neutral-700"
+                }`}
+              >
+                <span>{menu.title}</span>
+                {isLocked && (
+                  <span className="text-xs bg-neutral-800 text-neutral-300 px-2 py-1 rounded">
+                    Terkunci
+                  </span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       </section>
 
       <button
