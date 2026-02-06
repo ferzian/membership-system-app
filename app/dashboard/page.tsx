@@ -28,6 +28,9 @@ const menus = [
   { id: "m3", title: "Menu 3: Studi Kasus" },
   { id: "m4", title: "Menu 4: Bonus" },
   { id: "m5", title: "Menu 5: Webinar" },
+  { id: "m6", title: "Menu 6: Toolkit" },
+  { id: "m7", title: "Menu 7: Forum" },
+  { id: "m8", title: "Menu 8: Sertifikat" },
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
