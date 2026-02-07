@@ -31,6 +31,7 @@ const menus = [
   { id: "m6", title: "Menu 6: Toolkit" },
   { id: "m7", title: "Menu 7: Forum" },
   { id: "m8", title: "Menu 8: Sertifikat" },
+  { id: "m9", title: "Menu 9: Settings" },
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
@@ -197,6 +198,35 @@ export default function DashboardPage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Quick Actions</h2>
+          <p className="text-sm text-neutral-300">
+            Akses cepat ke menu penting.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={() => router.push("/settings")}
+            className="rounded-lg border border-neutral-700 bg-neutral-950/40 px-4 py-3 text-left transition hover:border-neutral-500"
+          >
+            <p className="text-sm font-semibold">Settings</p>
+            <p className="text-xs text-neutral-300">
+              Kelola profil, notifikasi, dan preferensi akun.
+            </p>
+          </button>
+          <button
+            onClick={() => router.push("/content")}
+            className="rounded-lg border border-neutral-700 bg-neutral-950/40 px-4 py-3 text-left transition hover:border-neutral-500"
+          >
+            <p className="text-sm font-semibold">Konten & Video</p>
+            <p className="text-xs text-neutral-300">
+              Lihat materi sesuai membership yang dipilih.
+            </p>
+          </button>
         </div>
       </section>
 
