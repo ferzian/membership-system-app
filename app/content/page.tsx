@@ -80,15 +80,15 @@ export default function ContentPage() {
       return (
         <li
           key={item.id}
-          className={`rounded-md border px-3 py-2 flex items-center justify-between ${
+          className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm ${
             isLocked
-              ? "border-neutral-800 bg-neutral-900/40 text-neutral-400"
-              : "border-neutral-700"
+              ? "border-stone-800 bg-ink/40 text-stone-400"
+              : "border-stone-700 bg-ink/60"
           }`}
         >
           <span>{item.title}</span>
           {isLocked && (
-            <span className="text-xs bg-neutral-800 text-neutral-300 px-2 py-1 rounded">
+            <span className="rounded-full bg-stone-800 px-3 py-1 text-xs text-stone-300">
               Terkunci
             </span>
           )}
@@ -97,58 +97,68 @@ export default function ContentPage() {
     });
 
   return (
-    <main className="max-w-2xl mx-auto p-6 space-y-6 text-white">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Konten & Video</h1>
-          <p className="text-sm text-neutral-300">
-            Akses terbatas berdasarkan membership.
+    <main className="min-h-screen bg-ink text-sand">
+      <div className="mesh" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
+
+      <div className="mx-auto w-full max-w-6xl space-y-8 px-6 py-10">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
+              Member library
+            </p>
+            <h1 className="text-3xl font-semibold">Konten & Video</h1>
+            <p className="text-sm text-stone-300">
+              Akses terbatas berdasarkan membership.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200">
+              {tierLabels[membershipTier]}
+            </div>
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200 transition hover:border-stone-500"
+            >
+              Ubah Membership
+            </button>
+          </div>
+        </div>
+
+        <section className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+          <h2 className="text-xl font-semibold">Ringkasan Akses</h2>
+          <p className="mt-2 text-sm text-stone-300">
+            Membership A: 1 konten & 1 video. Membership B: 3 konten & 3 video.
+            Membership C: semua konten & video.
           </p>
-        </div>
-        <div className="rounded-full border border-neutral-700 px-4 py-2 text-sm">
-          {tierLabels[membershipTier]}
-        </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div>
+              <h2 className="text-xl font-semibold">Video</h2>
+              <p className="text-sm text-stone-300">
+                Menampilkan {visibleVideos.length}/{videos.length} video.
+              </p>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {renderList(videos, visibleVideos.length)}
+            </ul>
+          </div>
+
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div>
+              <h2 className="text-xl font-semibold">Konten</h2>
+              <p className="text-sm text-stone-300">
+                Menampilkan {visibleContents.length}/{contents.length} konten.
+              </p>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {renderList(contents, visibleContents.length)}
+            </ul>
+          </div>
+        </section>
       </div>
-
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-2">
-        <h2 className="text-lg font-semibold">Ringkasan Akses</h2>
-        <p className="text-sm text-neutral-300">
-          Membership A: 1 konten & 1 video. Membership B: 3 konten & 3 video.
-          Membership C: semua konten & video.
-        </p>
-        <button
-          onClick={() => router.push("/dashboard")}
-          className="mt-2 inline-flex items-center justify-center border border-neutral-600 text-white font-medium rounded-md px-4 py-2 hover:bg-neutral-900"
-        >
-          Ubah Membership
-        </button>
-      </section>
-
-      <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-3">
-          <div>
-            <h2 className="text-lg font-semibold">Video</h2>
-            <p className="text-sm text-neutral-300">
-              Menampilkan {visibleVideos.length}/{videos.length} video.
-            </p>
-          </div>
-          <ul className="space-y-2">
-            {renderList(videos, visibleVideos.length)}
-          </ul>
-        </div>
-
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-3">
-          <div>
-            <h2 className="text-lg font-semibold">Konten</h2>
-            <p className="text-sm text-neutral-300">
-              Menampilkan {visibleContents.length}/{contents.length} konten.
-            </p>
-          </div>
-          <ul className="space-y-2">
-            {renderList(contents, visibleContents.length)}
-          </ul>
-        </div>
-      </section>
     </main>
   );
 }
