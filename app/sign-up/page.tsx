@@ -28,61 +28,120 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto p-6 space-y-4 text-white">
-      <h1 className="text-2xl font-bold">Sign Up</h1>
+    <main className="min-h-screen bg-ink text-sand">
+      <div className="mesh" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
 
-      {error && <p className="text-red-500">{error}</p>}
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 py-12 lg:flex-row lg:items-center">
+        <div className="space-y-6 lg:max-w-lg">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
+            Launch your community
+          </p>
+          <h1 className="text-4xl font-semibold text-sand sm:text-5xl">
+            Create a membership that feels premium.
+          </h1>
+          <p className="text-base text-stone-300">
+            Mulai dengan setup yang sederhana, lalu kembangkan ke tier premium,
+            konten eksklusif, dan event komunitas.
+          </p>
+          <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-stone-500">
+            <span>Fast onboarding</span>
+            <span>Tiered access</span>
+            <span>Automations</span>
+          </div>
+          <button
+            onClick={() => router.push("/")}
+            className="inline-flex items-center gap-2 text-sm text-stone-300 transition hover:text-sand"
+          >
+            Back to homepage
+          </button>
+        </div>
 
-      <div className="w-full space-y-3">
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 border border-neutral-700 rounded-md px-4 py-2 hover:bg-neutral-900"
-        >
-          Sign up with Google
-        </button>
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-2 border border-neutral-700 rounded-md px-4 py-2 hover:bg-neutral-900"
-        >
-          Sign up with Facebook
-        </button>
+        <div className="w-full rounded-3xl border border-stone-800 bg-charcoal p-8 shadow-hero">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold">Create account</h2>
+            <p className="text-sm text-stone-300">
+              Start your free trial and set up your first tier today.
+            </p>
+          </div>
+
+          {error && (
+            <div className="mt-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+              {error}
+            </div>
+          )}
+
+          <div className="mt-6 space-y-3">
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200 transition hover:border-stone-500"
+            >
+              Sign up with Google
+            </button>
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200 transition hover:border-stone-500"
+            >
+              Sign up with Facebook
+            </button>
+          </div>
+
+          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-stone-500">
+            <span className="h-px w-full bg-stone-800" />
+            OR
+            <span className="h-px w-full bg-stone-800" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <label className="block text-xs uppercase tracking-[0.3em] text-stone-500">
+              Full name
+              <input
+                name="name"
+                placeholder="Your name"
+                required
+                className="mt-2 w-full rounded-2xl border border-stone-800 bg-ink px-4 py-3 text-sm text-sand placeholder:text-stone-500"
+              />
+            </label>
+            <label className="block text-xs uppercase tracking-[0.3em] text-stone-500">
+              Email
+              <input
+                name="email"
+                type="email"
+                placeholder="you@company.com"
+                required
+                className="mt-2 w-full rounded-2xl border border-stone-800 bg-ink px-4 py-3 text-sm text-sand placeholder:text-stone-500"
+              />
+            </label>
+            <label className="block text-xs uppercase tracking-[0.3em] text-stone-500">
+              Password
+              <input
+                name="password"
+                type="password"
+                placeholder="Minimum 8 characters"
+                required
+                minLength={8}
+                className="mt-2 w-full rounded-2xl border border-stone-800 bg-ink px-4 py-3 text-sm text-sand placeholder:text-stone-500"
+              />
+            </label>
+            <button
+              type="submit"
+              className="w-full rounded-full bg-sand px-4 py-3 text-sm font-semibold text-ink transition hover:bg-amber-200"
+            >
+              Create Account
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-stone-400">
+            Already have an account?{" "}
+            <button
+              onClick={() => router.push("/sign-in")}
+              className="font-semibold text-sand transition hover:text-amber-200"
+            >
+              Sign in
+            </button>
+          </p>
+        </div>
       </div>
-
-      <div className="w-full flex items-center gap-3 text-neutral-400 text-sm">
-        <span className="h-px w-full bg-neutral-800" />
-        OR
-        <span className="h-px w-full bg-neutral-800" />
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4 w-full">
-        <input
-          name="name"
-          placeholder="Full Name"
-          required
-          className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          required
-          className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          required
-          minLength={8}
-          className="w-full rounded-md bg-neutral-900 border border-neutral-700 px-3 py-2"
-        />
-        <button
-          type="submit"
-          className="w-full bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-gray-200"
-        >
-          Create Account
-        </button>
-      </form>
     </main>
   );
 }
