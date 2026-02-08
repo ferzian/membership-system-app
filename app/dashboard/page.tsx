@@ -40,6 +40,21 @@ const tierLimits: Record<MembershipTier, number | "all"> = {
   c: "all",
 };
 
+const tierInfo: Record<MembershipTier, { label: string; summary: string }> = {
+  a: {
+    label: "Membership A",
+    summary: "Starter access untuk memulai komunitas kecil.",
+  },
+  b: {
+    label: "Membership B",
+    summary: "Akses menengah untuk konten mingguan.",
+  },
+  c: {
+    label: "Membership C",
+    summary: "Akses penuh untuk semua konten premium.",
+  },
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
@@ -83,197 +98,236 @@ export default function DashboardPage() {
   const { user } = session;
 
   return (
-    <main className="max-w-md h-screen flex items-center justify-center flex-col mx-auto p-6 space-y-6 text-white">
-      <div className="w-full text-center space-y-1">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p>Welcome, {user.name || "User"}!</p>
-        <p>Email: {user.email}</p>
+    <main className="min-h-screen bg-ink text-sand">
+      <div className="mesh" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
+
+      <div className="mx-auto w-full max-w-6xl space-y-10 px-6 py-10">
+        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
+              MemberHaus Dashboard
+            </p>
+            <h1 className="text-3xl font-semibold">Welcome, {user.name || "User"}!</h1>
+            <p className="text-sm text-stone-300">Email: {user.email}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => router.push("/settings")}
+              className="rounded-full border border-stone-700 bg-ink/60 px-5 py-2 text-sm text-stone-200 transition hover:border-stone-500"
+            >
+              Settings
+            </button>
+            <button
+              onClick={() => signOut()}
+              className="rounded-full bg-sand px-5 py-2 text-sm font-semibold text-ink transition hover:bg-amber-200"
+            >
+              Sign Out
+            </button>
+          </div>
+        </header>
+
+        <section className="grid gap-6 lg:grid-cols-3">
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Active tier
+            </p>
+            <p className="mt-4 text-2xl font-semibold text-sand">
+              {tierInfo[appliedTier].label}
+            </p>
+            <p className="mt-2 text-sm text-stone-300">
+              {tierInfo[appliedTier].summary}
+            </p>
+          </div>
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Access usage
+            </p>
+            <p className="mt-4 text-2xl font-semibold text-sand">
+              {visibleVideos.length}/{videos.length} videos
+            </p>
+            <p className="mt-2 text-sm text-stone-300">
+              {visibleContents.length}/{contents.length} konten aktif.
+            </p>
+          </div>
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Next actions
+            </p>
+            <p className="mt-4 text-2xl font-semibold text-sand">2 pending</p>
+            <p className="mt-2 text-sm text-stone-300">
+              Jadwalkan drop konten & evaluasi engagement minggu ini.
+            </p>
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">Pilih Membership</h2>
+              <p className="text-sm text-stone-300">
+                Sesuaikan akses konten dan video untuk tiap member.
+              </p>
+            </div>
+
+            <fieldset className="mt-6 grid gap-4">
+              <legend className="sr-only">Tipe Membership</legend>
+
+              {(["a", "b", "c"] as MembershipTier[]).map((tier) => (
+                <label
+                  key={tier}
+                  className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                    selectedTier === tier
+                      ? "border-amber-200 bg-amber-200/10"
+                      : "border-stone-800 bg-ink/60 hover:border-stone-600"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="membership-filter"
+                    value={tier}
+                    checked={selectedTier === tier}
+                    onChange={() => setSelectedTier(tier)}
+                    className="mt-1"
+                  />
+                  <div>
+                    <p className="font-medium text-sand">
+                      {tierInfo[tier].label}
+                    </p>
+                    <p className="text-sm text-stone-300">
+                      {tier === "a"
+                        ? "Akses 1 video dan 1 konten."
+                        : tier === "b"
+                        ? "Akses 3 video dan 3 konten."
+                        : "Akses penuh semua video dan konten."}
+                    </p>
+                  </div>
+                </label>
+              ))}
+            </fieldset>
+
+            <div className="mt-6">
+              <button
+                onClick={() => {
+                  setAppliedTier(selectedTier);
+                  window.localStorage.setItem("membershipTier", selectedTier);
+                }}
+                className="w-full rounded-full bg-sand px-4 py-3 text-sm font-semibold text-ink transition hover:bg-amber-200"
+              >
+                Simpan Membership
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">Quick Actions</h2>
+              <p className="text-sm text-stone-300">
+                Akses cepat ke menu penting.
+              </p>
+            </div>
+            <div className="mt-6 grid gap-4">
+              <button
+                onClick={() => router.push("/settings")}
+                className="rounded-2xl border border-stone-800 bg-ink/60 px-4 py-4 text-left transition hover:border-stone-600"
+              >
+                <p className="text-sm font-semibold">Settings</p>
+                <p className="text-xs text-stone-300">
+                  Kelola profil, notifikasi, dan preferensi akun.
+                </p>
+              </button>
+              <button
+                onClick={() => router.push("/content")}
+                className="rounded-2xl border border-stone-800 bg-ink/60 px-4 py-4 text-left transition hover:border-stone-600"
+              >
+                <p className="text-sm font-semibold">Konten & Video</p>
+                <p className="text-xs text-stone-300">
+                  Lihat materi sesuai membership yang dipilih.
+                </p>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div>
+              <h2 className="text-xl font-semibold">Video</h2>
+              <p className="text-sm text-stone-300">
+                Menampilkan {visibleVideos.length}/{videos.length} video.
+              </p>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {visibleVideos.map((video) => (
+                <li
+                  key={video.id}
+                  className="rounded-2xl border border-stone-800 bg-ink/60 px-4 py-3 text-sm"
+                >
+                  {video.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+            <div>
+              <h2 className="text-xl font-semibold">Konten</h2>
+              <p className="text-sm text-stone-300">
+                Menampilkan {visibleContents.length}/{contents.length} konten.
+              </p>
+            </div>
+            <ul className="mt-4 space-y-3">
+              {visibleContents.map((content) => (
+                <li
+                  key={content.id}
+                  className="rounded-2xl border border-stone-800 bg-ink/60 px-4 py-3 text-sm"
+                >
+                  {content.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-stone-800 bg-charcoal p-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold">Menu Akses</h2>
+              <p className="text-sm text-stone-300">
+                Menu terkunci mengikuti membership yang dipilih.
+              </p>
+            </div>
+            <button
+              onClick={() => router.push("/content")}
+              className="rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200 transition hover:border-stone-500"
+            >
+              Buka Halaman Konten & Video
+            </button>
+          </div>
+          <ul className="mt-6 grid gap-3 md:grid-cols-2">
+            {menus.map((menu, index) => {
+              const isLocked = index >= visibleMenuCount;
+              return (
+                <li
+                  key={menu.id}
+                  className={`flex items-center justify-between rounded-2xl border px-4 py-3 text-sm ${
+                    isLocked
+                      ? "border-stone-800 bg-ink/40 text-stone-400"
+                      : "border-stone-700 bg-ink/60"
+                  }`}
+                >
+                  <span>{menu.title}</span>
+                  {isLocked && (
+                    <span className="rounded-full bg-stone-800 px-3 py-1 text-xs text-stone-300">
+                      Terkunci
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
       </div>
-
-      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4">
-        <h2 className="text-lg font-semibold">Pilih Membership</h2>
-        <p className="text-sm text-neutral-300">
-          Pilih membership untuk mengatur akses konten dan video.
-        </p>
-
-        <fieldset className="mt-4 space-y-3">
-          <legend className="sr-only">Tipe Membership</legend>
-
-          <label className="flex items-start gap-3 rounded-lg border border-neutral-800 p-3 hover:border-neutral-600">
-            <input
-              type="radio"
-              name="membership-filter"
-              value="a"
-              checked={selectedTier === "a"}
-              onChange={() => setSelectedTier("a")}
-              defaultChecked
-              className="mt-1"
-            />
-            <div>
-              <p className="font-medium">Membership A</p>
-              <p className="text-sm text-neutral-300">
-                Akses 1 video dan 1 konten.
-              </p>
-            </div>
-          </label>
-
-          <label className="flex items-start gap-3 rounded-lg border border-neutral-800 p-3 hover:border-neutral-600">
-            <input
-              type="radio"
-              name="membership-filter"
-              value="b"
-              checked={selectedTier === "b"}
-              onChange={() => setSelectedTier("b")}
-              className="mt-1"
-            />
-            <div>
-              <p className="font-medium">Membership B</p>
-              <p className="text-sm text-neutral-300">
-                Akses 3 video dan 3 konten.
-              </p>
-            </div>
-          </label>
-
-          <label className="flex items-start gap-3 rounded-lg border border-neutral-800 p-3 hover:border-neutral-600">
-            <input
-              type="radio"
-              name="membership-filter"
-              value="c"
-              checked={selectedTier === "c"}
-              onChange={() => setSelectedTier("c")}
-              className="mt-1"
-            />
-            <div>
-              <p className="font-medium">Membership C</p>
-              <p className="text-sm text-neutral-300">
-                Akses penuh semua video dan konten.
-              </p>
-            </div>
-          </label>
-        </fieldset>
-
-        <div className="mt-4">
-          <button
-            onClick={() => {
-              setAppliedTier(selectedTier);
-              window.localStorage.setItem("membershipTier", selectedTier);
-            }}
-            className="w-full bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-gray-200"
-          >
-            Simpan Membership
-          </button>
-        </div>
-      </section>
-
-      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold">Video</h2>
-          <p className="text-sm text-neutral-300">
-            Menampilkan {visibleVideos.length}/{videos.length} video.
-          </p>
-          <ul className="mt-3 space-y-2">
-            {visibleVideos.map((video) => (
-              <li
-                key={video.id}
-                className="rounded-md border border-neutral-800 px-3 py-2"
-              >
-                {video.title}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h2 className="text-lg font-semibold">Konten</h2>
-          <p className="text-sm text-neutral-300">
-            Menampilkan {visibleContents.length}/{contents.length} konten.
-          </p>
-          <ul className="mt-3 space-y-2">
-            {visibleContents.map((content) => (
-              <li
-                key={content.id}
-                className="rounded-md border border-neutral-800 px-3 py-2"
-              >
-                {content.title}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold">Quick Actions</h2>
-          <p className="text-sm text-neutral-300">
-            Akses cepat ke menu penting.
-          </p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            onClick={() => router.push("/settings")}
-            className="rounded-lg border border-neutral-700 bg-neutral-950/40 px-4 py-3 text-left transition hover:border-neutral-500"
-          >
-            <p className="text-sm font-semibold">Settings</p>
-            <p className="text-xs text-neutral-300">
-              Kelola profil, notifikasi, dan preferensi akun.
-            </p>
-          </button>
-          <button
-            onClick={() => router.push("/content")}
-            className="rounded-lg border border-neutral-700 bg-neutral-950/40 px-4 py-3 text-left transition hover:border-neutral-500"
-          >
-            <p className="text-sm font-semibold">Konten & Video</p>
-            <p className="text-xs text-neutral-300">
-              Lihat materi sesuai membership yang dipilih.
-            </p>
-          </button>
-        </div>
-      </section>
-
-      <section className="w-full rounded-xl border border-neutral-800 bg-neutral-900/60 p-4 space-y-3">
-        <div>
-          <h2 className="text-lg font-semibold">Menu Akses</h2>
-          <p className="text-sm text-neutral-300">
-            Menu terkunci mengikuti membership yang dipilih.
-          </p>
-        </div>
-        <ul className="space-y-2">
-          {menus.map((menu, index) => {
-            const isLocked = index >= visibleMenuCount;
-            return (
-              <li
-                key={menu.id}
-                className={`rounded-md border px-3 py-2 flex items-center justify-between ${
-                  isLocked
-                    ? "border-neutral-800 bg-neutral-900/40 text-neutral-400"
-                    : "border-neutral-700"
-                }`}
-              >
-                <span>{menu.title}</span>
-                {isLocked && (
-                  <span className="text-xs bg-neutral-800 text-neutral-300 px-2 py-1 rounded">
-                    Terkunci
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-
-      <button
-        onClick={() => router.push("/content")}
-        className="w-full border border-neutral-600 text-white font-medium rounded-md px-4 py-2 hover:bg-neutral-900"
-      >
-        Buka Halaman Konten & Video
-      </button>
-
-      <button
-        onClick={() => signOut()}
-        className="w-full bg-white text-black font-medium rounded-md px-4 py-2 hover:bg-gray-200"
-      >
-        Sign Out
-      </button>
     </main>
   );
 }
