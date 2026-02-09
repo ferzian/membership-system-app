@@ -64,7 +64,9 @@ export default function DashboardPage() {
   const [isSaving, setIsSaving] = useState(false);
   const resolveTier = (tier?: MembershipTier | null) =>
     tier && tierLimits[tier] ? tier : null;
-  const sessionTier = session?.user?.membershipTier as MembershipTier | undefined;
+  const sessionTier =
+    (session?.user as { membershipTier?: MembershipTier } | undefined)
+      ?.membershipTier;
   const resolvedSelectedTier =
     resolveTier(selectedTier) ?? resolveTier(sessionTier) ?? "A";
   const resolvedAppliedTier =
