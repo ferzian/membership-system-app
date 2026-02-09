@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useEffect, useMemo, useState } from "react";
 
-type MembershipTier = "a" | "b" | "c";
+type MembershipTier = "A" | "B" | "C";
 
 const videos = [
   { id: "v1", title: "Video 1: Intro Membership" },
@@ -35,21 +35,21 @@ const menus = [
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
-  a: 1,
-  b: 3,
-  c: "all",
+  A: 1,
+  B: 3,
+  C: "all",
 };
 
 const tierInfo: Record<MembershipTier, { label: string; summary: string }> = {
-  a: {
+  A: {
     label: "Membership A",
     summary: "Starter access untuk memulai komunitas kecil.",
   },
-  b: {
+  B: {
     label: "Membership B",
     summary: "Akses menengah untuk konten mingguan.",
   },
-  c: {
+  C: {
     label: "Membership C",
     summary: "Akses penuh untuk semua konten premium.",
   },
@@ -58,20 +58,10 @@ const tierInfo: Record<MembershipTier, { label: string; summary: string }> = {
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const getStoredTier = (): MembershipTier => {
-    if (typeof window === "undefined") return "a";
-    const stored = window.localStorage.getItem("membershipTier") as
-      | MembershipTier
-      | null;
-    return stored && tierLimits[stored] ? stored : "a";
-  };
-
-  const [selectedTier, setSelectedTier] = useState<MembershipTier>(
-    () => getStoredTier()
-  );
-  const [appliedTier, setAppliedTier] = useState<MembershipTier>(
-    () => getStoredTier()
-  );
+  const [selectedTier, setSelectedTier] = useState<MembershipTier>("A");
+  const [appliedTier, setAppliedTier] = useState<MembershipTier>("A");
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const { visibleVideos, visibleContents, visibleMenuCount } = useMemo(() => {
     const limit = tierLimits[appliedTier];
     const slice = (items: typeof videos) =>
@@ -87,6 +77,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/sign-in");
+      return;
+    }
+
+    if (session?.user?.membershipTier) {
+      const tier = session.user.membershipTier as MembershipTier;
+      if (tierLimits[tier]) {
+        setSelectedTier(tier);
+        setAppliedTier(tier);
+      }
     }
   }, [isPending, session, router]);
 
@@ -173,7 +172,7 @@ export default function DashboardPage() {
             <fieldset className="mt-6 grid gap-4">
               <legend className="sr-only">Tipe Membership</legend>
 
-              {(["a", "b", "c"] as MembershipTier[]).map((tier) => (
+              {(["A", "B", "C"] as MembershipTier[]).map((tier) => (
                 <label
                   key={tier}
                   className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
@@ -195,9 +194,9 @@ export default function DashboardPage() {
                       {tierInfo[tier].label}
                     </p>
                     <p className="text-sm text-stone-300">
-                      {tier === "a"
+                      {tier === "A"
                         ? "Akses 1 video dan 1 konten."
-                        : tier === "b"
+                        : tier === "B"
                         ? "Akses 3 video dan 3 konten."
                         : "Akses penuh semua video dan konten."}
                     </p>
@@ -207,14 +206,39 @@ export default function DashboardPage() {
             </fieldset>
 
             <div className="mt-6">
+              {saveError && (
+                <div className="mb-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+                  {saveError}
+                </div>
+              )}
               <button
-                onClick={() => {
-                  setAppliedTier(selectedTier);
-                  window.localStorage.setItem("membershipTier", selectedTier);
+                onClick={async () => {
+                  setSaveError(null);
+                  setIsSaving(true);
+
+                  try {
+                    const response = await fetch("/api/membership", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ tier: selectedTier }),
+                    });
+
+                    if (!response.ok) {
+                      setSaveError("Membership gagal disimpan. Silakan coba lagi.");
+                      return;
+                    }
+
+                    setAppliedTier(selectedTier);
+                  } catch (err) {
+                    setSaveError("Membership gagal disimpan. Silakan coba lagi.");
+                  } finally {
+                    setIsSaving(false);
+                  }
                 }}
                 className="w-full rounded-full bg-sand px-4 py-3 text-sm font-semibold text-ink transition hover:bg-amber-200"
+                disabled={isSaving}
               >
-                Simpan Membership
+                {isSaving ? "Menyimpan..." : "Simpan Membership"}
               </button>
             </div>
           </div>
