@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 
@@ -42,7 +42,6 @@ const tierLabels: Record<MembershipTier, string> = {
 export default function ContentPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [membershipTier, setMembershipTier] = useState<MembershipTier>("A");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -50,13 +49,10 @@ export default function ContentPage() {
       return;
     }
 
-    if (session?.user?.membershipTier) {
-      const tier = session.user.membershipTier as MembershipTier;
-      if (tierLimits[tier]) {
-        setMembershipTier(tier);
-      }
-    }
   }, [isPending, session, router]);
+
+  const sessionTier = session?.user?.membershipTier as MembershipTier | undefined;
+  const membershipTier = sessionTier && tierLimits[sessionTier] ? sessionTier : "A";
 
   const { visibleVideos, visibleContents } = useMemo(() => {
     const limit = tierLimits[membershipTier];
