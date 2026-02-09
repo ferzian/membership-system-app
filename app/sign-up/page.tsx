@@ -7,6 +7,7 @@ import { signUp } from "@/lib/auth-client";
 export default function SignUpPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = useState<"A" | "B" | "C">("A");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,6 +24,17 @@ export default function SignUpPage() {
     if (res.error) {
       setError(res.error.message || "Something went wrong.");
     } else {
+      const tierRes = await fetch("/api/membership", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier: selectedTier }),
+      });
+
+      if (!tierRes.ok) {
+        setError("Membership gagal disimpan. Silakan coba lagi.");
+        return;
+      }
+
       router.push("/dashboard");
     }
   }
@@ -123,6 +135,38 @@ export default function SignUpPage() {
                 className="mt-2 w-full rounded-2xl border border-stone-800 bg-ink px-4 py-3 text-sm text-sand placeholder:text-stone-500"
               />
             </label>
+            <fieldset className="space-y-3">
+              <legend className="text-xs uppercase tracking-[0.3em] text-stone-500">
+                Membership type
+              </legend>
+              {([
+                { key: "A", label: "Membership A", desc: "Akses 1 konten & 1 video." },
+                { key: "B", label: "Membership B", desc: "Akses 3 konten & 3 video." },
+                { key: "C", label: "Membership C", desc: "Akses penuh semua konten." },
+              ] as const).map((tier) => (
+                <label
+                  key={tier.key}
+                  className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                    selectedTier === tier.key
+                      ? "border-amber-200 bg-amber-200/10"
+                      : "border-stone-800 bg-ink/60 hover:border-stone-600"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="membership-tier"
+                    value={tier.key}
+                    checked={selectedTier === tier.key}
+                    onChange={() => setSelectedTier(tier.key)}
+                    className="mt-1"
+                  />
+                  <div>
+                    <p className="font-medium text-sand">{tier.label}</p>
+                    <p className="text-sm text-stone-300">{tier.desc}</p>
+                  </div>
+                </label>
+              ))}
+            </fieldset>
             <button
               type="submit"
               className="w-full rounded-full bg-sand px-4 py-3 text-sm font-semibold text-ink transition hover:bg-amber-200"
