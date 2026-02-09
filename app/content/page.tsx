@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 
-type MembershipTier = "a" | "b" | "c";
+type MembershipTier = "A" | "B" | "C";
 
 type Item = {
   id: string;
@@ -28,33 +28,33 @@ const contents: Item[] = [
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
-  a: 1,
-  b: 3,
-  c: "all",
+  A: 1,
+  B: 3,
+  C: "all",
 };
 
 const tierLabels: Record<MembershipTier, string> = {
-  a: "Membership A",
-  b: "Membership B",
-  c: "Membership C",
+  A: "Membership A",
+  B: "Membership B",
+  C: "Membership C",
 };
 
 export default function ContentPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const getStoredTier = (): MembershipTier => {
-    if (typeof window === "undefined") return "a";
-    const stored = window.localStorage.getItem("membershipTier") as
-      | MembershipTier
-      | null;
-    return stored && tierLimits[stored] ? stored : "a";
-  };
-
-  const [membershipTier] = useState<MembershipTier>(() => getStoredTier());
+  const [membershipTier, setMembershipTier] = useState<MembershipTier>("A");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/sign-in");
+      return;
+    }
+
+    if (session?.user?.membershipTier) {
+      const tier = session.user.membershipTier as MembershipTier;
+      if (tierLimits[tier]) {
+        setMembershipTier(tier);
+      }
     }
   }, [isPending, session, router]);
 
