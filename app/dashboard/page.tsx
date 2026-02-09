@@ -58,12 +58,19 @@ const tierInfo: Record<MembershipTier, { label: string; summary: string }> = {
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
-  const [selectedTier, setSelectedTier] = useState<MembershipTier>("A");
-  const [appliedTier, setAppliedTier] = useState<MembershipTier>("A");
+  const [selectedTier, setSelectedTier] = useState<MembershipTier | null>(null);
+  const [appliedTier, setAppliedTier] = useState<MembershipTier | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const resolveTier = (tier?: MembershipTier | null) =>
+    tier && tierLimits[tier] ? tier : null;
+  const sessionTier = session?.user?.membershipTier as MembershipTier | undefined;
+  const resolvedSelectedTier =
+    resolveTier(selectedTier) ?? resolveTier(sessionTier) ?? "A";
+  const resolvedAppliedTier =
+    resolveTier(appliedTier) ?? resolveTier(sessionTier) ?? "A";
   const { visibleVideos, visibleContents, visibleMenuCount } = useMemo(() => {
-    const limit = tierLimits[appliedTier];
+    const limit = tierLimits[resolvedAppliedTier];
     const slice = (items: typeof videos) =>
       limit === "all" ? items : items.slice(0, limit);
 
@@ -72,7 +79,7 @@ export default function DashboardPage() {
       visibleContents: slice(contents),
       visibleMenuCount: limit === "all" ? menus.length : limit,
     };
-  }, [appliedTier]);
+  }, [resolvedAppliedTier]);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -80,13 +87,6 @@ export default function DashboardPage() {
       return;
     }
 
-    if (session?.user?.membershipTier) {
-      const tier = session.user.membershipTier as MembershipTier;
-      if (tierLimits[tier]) {
-        setSelectedTier(tier);
-        setAppliedTier(tier);
-      }
-    }
   }, [isPending, session, router]);
 
   if (isPending)
@@ -132,10 +132,10 @@ export default function DashboardPage() {
               Active tier
             </p>
             <p className="mt-4 text-2xl font-semibold text-sand">
-              {tierInfo[appliedTier].label}
+              {tierInfo[resolvedAppliedTier].label}
             </p>
             <p className="mt-2 text-sm text-stone-300">
-              {tierInfo[appliedTier].summary}
+              {tierInfo[resolvedAppliedTier].summary}
             </p>
           </div>
           <div className="rounded-3xl border border-stone-800 bg-charcoal p-6">
@@ -176,7 +176,7 @@ export default function DashboardPage() {
                 <label
                   key={tier}
                   className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
-                    selectedTier === tier
+                    resolvedSelectedTier === tier
                       ? "border-amber-200 bg-amber-200/10"
                       : "border-stone-800 bg-ink/60 hover:border-stone-600"
                   }`}
@@ -185,7 +185,7 @@ export default function DashboardPage() {
                     type="radio"
                     name="membership-filter"
                     value={tier}
-                    checked={selectedTier === tier}
+                    checked={resolvedSelectedTier === tier}
                     onChange={() => setSelectedTier(tier)}
                     className="mt-1"
                   />
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                     const response = await fetch("/api/membership", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ tier: selectedTier }),
+                      body: JSON.stringify({ tier: resolvedSelectedTier }),
                     });
 
                     if (!response.ok) {
@@ -228,8 +228,8 @@ export default function DashboardPage() {
                       return;
                     }
 
-                    setAppliedTier(selectedTier);
-                  } catch (err) {
+                    setAppliedTier(resolvedSelectedTier);
+                  } catch {
                     setSaveError("Membership gagal disimpan. Silakan coba lagi.");
                   } finally {
                     setIsSaving(false);
