@@ -51,7 +51,9 @@ export default function ContentPage() {
 
   }, [isPending, session, router]);
 
-  const sessionTier = session?.user?.membershipTier as MembershipTier | undefined;
+  const sessionTier =
+    (session?.user as { membershipTier?: MembershipTier } | undefined)
+      ?.membershipTier;
   const membershipTier = sessionTier && tierLimits[sessionTier] ? sessionTier : "A";
 
   const { visibleVideos, visibleContents } = useMemo(() => {
