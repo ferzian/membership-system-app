@@ -349,7 +349,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-6 pb-24">
-        <div className="rounded-[40px] border border-stone-800 bg-gradient-to-r from-stone-900 via-stone-950 to-stone-900 p-10 text-center shadow-hero sm:p-14">
+        <div className="rounded-[40px] border border-stone-800 bg-linear-to-r from-stone-900 via-stone-950 to-stone-900 p-10 text-center shadow-hero sm:p-14">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-400">
             Ready to launch?
           </p>
