@@ -32,6 +32,7 @@ const menus = [
   { id: "m7", title: "Menu 7: Forum" },
   { id: "m8", title: "Menu 8: Sertifikat" },
   { id: "m9", title: "Menu 9: Settings" },
+  { id: "m10", title: "Menu 10: Komunitas" },
 ];
 
 const tierLimits: Record<MembershipTier, number | "all"> = {
