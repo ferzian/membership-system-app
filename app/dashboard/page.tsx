@@ -112,6 +112,9 @@ export default function DashboardPage() {
             </p>
             <h1 className="text-3xl font-semibold">Welcome, {user.name || "User"}!</h1>
             <p className="text-sm text-stone-300">Email: {user.email}</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Preview build - sample data only
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
