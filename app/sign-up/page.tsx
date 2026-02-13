@@ -56,6 +56,9 @@ export default function SignUpPage() {
             Mulai dengan setup yang sederhana, lalu kembangkan ke tier premium,
             konten eksklusif, dan event komunitas.
           </p>
+          <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+            Preview build - sample data only
+          </p>
           <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-stone-500">
             <span>Fast onboarding</span>
             <span>Tiered access</span>
