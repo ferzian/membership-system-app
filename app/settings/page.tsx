@@ -16,6 +16,9 @@ export default function SettingsPage() {
             <p className="text-sm text-stone-300">
               Atur profil, notifikasi, dan preferensi membership Anda.
             </p>
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Preview build - sample data only
+            </p>
           </div>
           <Link
             href="/dashboard"
