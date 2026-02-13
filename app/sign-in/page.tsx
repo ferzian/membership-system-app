@@ -43,6 +43,9 @@ export default function SignInPage() {
             Masuk untuk mengelola tier, konten premium, dan pengalaman member
             Anda dalam satu dashboard yang rapi.
           </p>
+          <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+            Preview build - sample data only
+          </p>
           <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.3em] text-stone-500">
             <span>Secure login</span>
             <span>Unified analytics</span>
