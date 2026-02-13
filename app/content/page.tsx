@@ -109,6 +109,9 @@ export default function ContentPage() {
             <p className="text-sm text-stone-300">
               Akses terbatas berdasarkan membership.
             </p>
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Preview build - sample data only
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="rounded-full border border-stone-700 bg-ink/60 px-4 py-2 text-sm text-stone-200">
