@@ -59,6 +59,9 @@ export default function Home() {
               onboarding, renewals, and perks while your audience stays focused on
               the experience.
             </p>
+            <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+              Preview build - sample data only
+            </p>
             <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={() => router.push("/sign-up")}
