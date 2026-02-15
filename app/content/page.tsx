@@ -159,6 +159,31 @@ export default function ContentPage() {
             </ul>
           </div>
         </section>
+
+        <section className="rounded-3xl border border-stone-800 bg-ink/60 p-6 md:flex md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
+              Next steps
+            </p>
+            <p className="mt-2 text-sm text-stone-300">
+              Upgrade tier untuk membuka lebih banyak materi premium.
+            </p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 md:mt-0">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-sand transition hover:border-stone-500"
+            >
+              Kelola membership
+            </button>
+            <button
+              onClick={() => router.push("/settings")}
+              className="rounded-full bg-sand px-4 py-2 text-sm font-semibold text-ink transition hover:bg-amber-200"
+            >
+              Atur preferensi
+            </button>
+          </div>
+        </section>
       </div>
     </main>
   );
