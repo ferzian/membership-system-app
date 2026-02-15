@@ -143,6 +143,33 @@ export default function SignInPage() {
           </p>
         </div>
       </div>
+
+      <section className="mx-auto w-full max-w-5xl px-6 pb-12">
+        <div className="rounded-3xl border border-stone-800 bg-ink/60 p-6 md:flex md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-stone-500">
+              Need help?
+            </p>
+            <p className="mt-2 text-sm text-stone-300">
+              Reset akses atau lihat panduan onboarding terbaru.
+            </p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 md:mt-0">
+            <button
+              onClick={() => router.push("/sign-up")}
+              className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-sand transition hover:border-stone-500"
+            >
+              Create account
+            </button>
+            <button
+              onClick={() => router.push("/")}
+              className="rounded-full bg-sand px-4 py-2 text-sm font-semibold text-ink transition hover:bg-amber-200"
+            >
+              View overview
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
