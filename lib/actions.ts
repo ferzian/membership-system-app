@@ -4,9 +4,7 @@ import { headers } from "next/headers";
 
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import type { Prisma } from "@/src/generated/prisma/client";
-
-export type MembershipTier = Prisma.MembershipTier;
+import type { MembershipTier } from "@/src/generated/prisma/enums";
 
 type MembershipSummary = {
 	tier: MembershipTier;
@@ -61,8 +59,9 @@ export function normalizeMembershipTier(
 }
 
 export async function getServerSession() {
+	const requestHeaders = await headers();
 	return auth.api.getSession({
-		headers: headers(),
+		headers: Object.fromEntries(requestHeaders.entries()),
 	});
 }
 
@@ -83,7 +82,6 @@ export async function getCurrentUser() {
 
 export async function getCurrentMembershipTier(): Promise<MembershipTier> {
 	const user = await requireUser();
-	if (user.membershipTier) return user.membershipTier as MembershipTier;
 
 	const record = await prisma.user.findUnique({
 		where: { id: user.id },
