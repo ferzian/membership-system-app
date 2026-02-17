@@ -6,7 +6,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <main className="min-h-screen bg-ink text-sand">
+    <main className="min-h-screen bg-ink text-sand fade-up">
       <div className="mesh" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
 
