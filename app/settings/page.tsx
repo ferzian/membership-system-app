@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function SettingsPage() {
   return (
-    <main className="min-h-screen bg-ink text-sand">
+    <main className="min-h-screen bg-ink text-sand fade-up">
       <div className="mesh" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
 
