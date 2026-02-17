@@ -93,14 +93,14 @@ export default function DashboardPage() {
   }, [isPending, session, router]);
 
   if (isPending)
-    return <p className="text-center mt-8 text-white">Loading...</p>;
+    return <p className="text-center mt-8 text-stone-500">Loading...</p>;
   if (!session?.user)
-    return <p className="text-center mt-8 text-white">Redirecting...</p>;
+    return <p className="text-center mt-8 text-stone-500">Redirecting...</p>;
 
   const { user } = session;
 
   return (
-    <main className="min-h-screen bg-ink text-sand">
+    <main className="min-h-screen bg-ink text-sand fade-up">
       <div className="mesh" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
 
