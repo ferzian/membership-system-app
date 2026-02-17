@@ -40,7 +40,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="min-h-screen bg-ink text-sand">
+    <main className="min-h-screen bg-ink text-sand fade-up">
       <div className="mesh" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
 
